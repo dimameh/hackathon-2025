@@ -6,3 +6,9 @@
 /test_data/
 .vscode/
 .DS_Store
+
+/backend/myenv/
+/backend/__pycache__/
+/backend/.mypy_cache/
+/backend/sessions/
+/backend/uploaded_notes/
