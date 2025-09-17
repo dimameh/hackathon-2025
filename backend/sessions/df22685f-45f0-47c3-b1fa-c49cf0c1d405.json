@@ -1,0 +1,35 @@
+{
+  "file_path": "uploaded_notes/Prescription.pdf",
+  "data": {
+    "title": "Prescription for Herbal Medicine",
+    "date": "October 8, 2025",
+    "parties_or_patient": [
+      "John Doe",
+      "Dmitriy Mekh"
+    ],
+    "diagnoses_or_topics": [
+      "Type 2 Diabetes",
+      "Hyperlipidemia"
+    ],
+    "medications_or_items": [
+      {
+        "name": "Metformin",
+        "dosage": "500 mg",
+        "form": "Tablet",
+        "duration": "4 weeks",
+        "instructions": "1 tablet orally twice daily with meals."
+      },
+      {
+        "name": "Atorvastatin",
+        "dosage": "10 mg",
+        "form": "Tablet",
+        "duration": "Ongoing",
+        "instructions": "1 tablet orally at bedtime."
+      }
+    ],
+    "recommendations": "Dietary: Follow a balanced diet rich in whole foods and low in processed sugars; drink at least 8 glasses of water per day. Lifestyle: Engage in regular physical activity (at least 30 minutes of moderate exercise most days); practice stress-reduction techniques such as meditation or yoga. Safety/Follow-up: Monitor any side effects from herbal medications and report any adverse reactions immediately; next appointment on November 8, 2025. Validity/General advice: Prescription is valid until October 8, 2025 unless otherwise specified; always consult with a healthcare professional before starting any new treatment or changing existing therapies.",
+    "full_text": "Your Logo | Devon Rd, Hempstead, NY | yourinfo@emailaddress.com | WWW.TEMPLATE.NET | 222 555 7777\n\nPrescription for Herbal Medicine\n\nDate: October 8, 2025\nPatient Name: John Doe\nPatient ID: 123456\nDate of Birth: January 15, 1970\n\nPrescribing Practitioner\nName: Dmitriy Mekh\nLicense Number: 789456\nContact Information: codemekh@gmail.com\n\nDiagnosis\nPrimary Diagnosis: Type 2 Diabetes\nSecondary Conditions: Hyperlipidemia\n\nMedicine Prescription\nMetformin — Dosage: 500 mg; Form: Tablet; Duration: 4 weeks; Instructions: 1 tablet orally twice daily with meals.\nAtorvastatin — Dosage: 10 mg; Form: tablet; Duration: Ongoing; Instructions: 1 tablet orally at bedtime.\n\nAdditional Instructions\nDietary Recommendations:\n- Follow a balanced diet rich in whole foods and low in processed sugars.\n- Drink at least 8 glasses of water per day.\nLifestyle Modifications:\n- Engage in regular physical activity (at least 30 minutes of moderate exercise most days).\n- Practice stress-reduction techniques such as meditation or yoga.\n\nFollow-Up\nNext Appointment: November 8, 2025\nComments: Monitor any side effects from herbal medications. Report any adverse reactions immediately.\n\nSignature\nSignature\nDmitriy Mekh\nLicense Number: 789456\n\nNote: This prescription is valid until October 8, 2025, unless otherwise specified. Always consult with a healthcare professional before starting any new treatment or making changes to existing therapies."
+  },
+  "status": "new",
+  "reminders": []
+}
