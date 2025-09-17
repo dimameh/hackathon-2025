@@ -1,0 +1,8 @@
+/node_modules/
+/venv/
+/sessions/
+/uploaded_notes/
+.env
+/test_data/
+.vscode/
+.DS_Store
