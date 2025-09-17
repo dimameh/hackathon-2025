@@ -1,13 +1,16 @@
 acres==0.5.0
 annotated-types==0.7.0
 anyio==4.10.0
+APScheduler==3.11.0
 blinker==1.9.0
 certifi==2025.8.3
+cffi==2.0.0
 charset-normalizer==3.4.3
 ci-info==0.3.0
 click==8.2.1
 configobj==5.0.9
 configparser==7.2.0
+cryptography==46.0.1
 distro==1.9.0
 etelemetry==0.3.1
 filelock==3.19.1
@@ -37,6 +40,7 @@ pdf2image==1.17.0
 pillow==11.3.0
 prov==2.1.1
 puremagic==1.30
+pycparser==2.23
 pydantic==2.11.9
 pydantic_core==2.33.2
 pydot==4.0.1
@@ -47,6 +51,7 @@ pytz==2025.2
 pyxnat==1.6.3
 rdflib==7.1.4
 requests==2.32.5
+retell-sdk==4.46.0
 scipy==1.16.2
 simplejson==3.20.1
 six==1.17.0
@@ -57,5 +62,6 @@ types-Flask-Cors==6.0.0.20250809
 typing-inspection==0.4.1
 typing_extensions==4.15.0
 tzdata==2025.2
+tzlocal==5.3.1
 urllib3==2.5.0
 Werkzeug==3.1.3

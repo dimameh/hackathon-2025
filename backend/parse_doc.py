@@ -28,8 +28,8 @@ def parse_doc(file_paths: list[str], instruction: str | None = None) -> dict[str
     - instruction: what to extract (optional)
     """
     content_items: list[ResponseInputMessageContentListParam] = []
-    temp_files: list[str] = []  # для хранения путей к временным файлам
-    openai_file_ids: list[str] = []  # для хранения ID файлов OpenAI
+    temp_files: list[str] = []  # for storing paths to temporary files
+    openai_file_ids: list[str] = []  # for storing OpenAI file IDs
     
     try:
         for file_path in file_paths:
@@ -46,11 +46,11 @@ def parse_doc(file_paths: list[str], instruction: str | None = None) -> dict[str
 
             if mime == "application/pdf":
                 images = transform_pdf_to_images(p.as_posix())
-                temp_files.extend(images)  # сохраняем пути к временным файлам
+                temp_files.extend(images)  # save paths to temporary files
                 for image in images:
                     with open(image, "rb") as f:
                         up = client.files.create(file=f, purpose="vision")
-                        openai_file_ids.append(up.id)  # сохраняем ID файла
+                        openai_file_ids.append(up.id)  # save OpenAI file ID
                         content_items.append([
                             cast(ResponseInputImageParam, {
                                 "type": "input_image", "file_id": up.id, "detail": "auto"},
@@ -58,7 +58,7 @@ def parse_doc(file_paths: list[str], instruction: str | None = None) -> dict[str
             else:
                 with open(p, "rb") as f:
                     up = client.files.create(file=f, purpose="vision")
-                    openai_file_ids.append(up.id)  # сохраняем ID файла
+                    openai_file_ids.append(up.id)  # save OpenAI file ID
                     content_items.append([
                         cast(
                             ResponseInputImageParam,
@@ -108,7 +108,7 @@ def parse_doc(file_paths: list[str], instruction: str | None = None) -> dict[str
 
 def cleanup_openai_files(file_ids: list[str]) -> None:
     """
-    Deletes files from OpenAI by their ID
+    Deletes files from OpenAI by their IDs
     - file_ids: list of file IDs to delete
     """
     for file_id in file_ids:
