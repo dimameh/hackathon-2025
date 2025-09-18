@@ -6,7 +6,7 @@ from file_store import FileSessionStore
 from create_session import create_session
 
 from apscheduler.schedulers.background import BackgroundScheduler # type: ignore  # pyright: ignore[reportMissingTypeStubs]
-from initial_call import make_patient_call
+from initial_call import make_patient_call, wait_for_call_completion
 
 
 app = Flask(__name__)
@@ -60,18 +60,38 @@ def check_new_sessions():
         store.update(session_id, {'status': 'calling'})
         # function to start the call, implement in step 5
         print(f"[Scheduler] Starting first call for session {session_id}")
-        make_patient_call(store.get(session_id)["data"])
+        phone_call = make_patient_call(store.get(session_id)["data"])
+        final_call_details = wait_for_call_completion(phone_call.call_id)
         print(f"[Scheduler] First call completed for session {session_id}")
 
-        store.update(session_id, {'status': 'initial_call_completed'})
-
+        if final_call_details:
+            print(f"[Scheduler] Call completed for session {session_id}")
+            
+            # Extract any collected data from the call
+            collected_data = final_call_details.collected_dynamic_variables or {}
+            transcript = final_call_details.transcript or ""
+            
+            # Store the results
+            store.update(session_id, {
+                'status': 'initial_call_completed',
+                'call_results': {
+                    'call_id': phone_call.call_id,
+                    'transcript': transcript,
+                    'collected_data': collected_data,
+                    'call_status': final_call_details.call_status,
+                    'disconnection_reason': final_call_details.disconnection_reason
+                }
+            })
+            
+            print(f"[Scheduler] Results stored for session {session_id}")
+        else:
+            # Handle timeout or error
+            store.update(session_id, {'status': 'call_failed'})
+            print(f"[Scheduler] Call failed or timed out for session {session_id}")
 
 
 # Register task in scheduler: execute every 30 seconds
 scheduler.add_job(check_new_sessions, 'interval', seconds=5)
-
-# Start scheduler together with Flask
-
 
 @app.before_request
 def start_scheduler():

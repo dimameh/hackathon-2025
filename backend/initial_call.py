@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from retell import Retell
 
 # Initialize Retell client
@@ -87,3 +88,33 @@ def make_patient_call(patient_data):
     )
 
     return call_response
+
+
+def wait_for_call_completion(call_id, timeout_seconds=3600):
+    """Wait for call to finish and return final call details"""
+
+    start_time = time.time()
+
+    while time.time() - start_time < timeout_seconds:
+        try:
+            # Get current call status
+            call_details = client.call.retrieve(call_id)
+
+            # Check if call is finished
+            if call_details.call_status in ['ended', 'error', 'not_connected']:
+                print(
+                    f"[Scheduler] Call {call_id} finished with status: {call_details.call_status}")
+                return call_details
+
+            # Call is still in progress
+            print(
+                f"[Scheduler] Call {call_id} status: {call_details.call_status}, waiting...")
+            time.sleep(5)  # Wait 5 seconds before checking again
+
+        except Exception as e:
+            print(f"[Scheduler] Error checking call status: {e}")
+            time.sleep(5)
+
+    # Timeout reached
+    print(f"[Scheduler] Timeout waiting for call {call_id} to complete")
+    return None
