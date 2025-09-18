@@ -73,9 +73,10 @@ scheduler.add_job(check_new_sessions, 'interval', seconds=5)
 # Start scheduler together with Flask
 
 
-with app.app_context():
-    # Start background tasks
-    scheduler.start()
+@app.before_request
+def start_scheduler():
+    if not scheduler.running:
+        scheduler.start()
 
 
 @app.teardown_appcontext
