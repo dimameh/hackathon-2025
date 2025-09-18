@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import os
@@ -5,7 +6,9 @@ from flask_cors import CORS
 from file_store import FileSessionStore
 from create_session import create_session
 
-from apscheduler.schedulers.background import BackgroundScheduler # type: ignore  # pyright: ignore[reportMissingTypeStubs]
+# from apscheduler.schedulers.background import BackgroundScheduler # type: ignore  # pyright: ignore[reportMissingTypeStubs]
+from flask_apscheduler import APScheduler # type: ignore
+
 from initial_call import make_patient_call, wait_for_call_completion
 
 
@@ -16,6 +19,7 @@ upload_folder = "uploaded_notes"
 os.makedirs(upload_folder, exist_ok=True)
 
 store = FileSessionStore(base_dir="sessions", ext=".json")
+scheduler = APScheduler()
 
 
 @app.route('/api/upload', methods=['POST'])
@@ -48,11 +52,9 @@ def upload_note():
 def get_users():
     return jsonify({'message': 'Users fetched'}), 200
 
-
-scheduler = BackgroundScheduler()
-
-
+@scheduler.task('interval', id='check_new_sessions', seconds=5)
 def check_new_sessions():
+    print("Checking new sessions")
     # Go through sessions and find new ones
     for session_id, sess in list(store.get_by_status('new').items()):
         print(f"[Scheduler] New session {session_id}, starting first call.")
@@ -63,6 +65,26 @@ def check_new_sessions():
         phone_call = make_patient_call(store.get(session_id)["data"])
         final_call_details = wait_for_call_completion(phone_call.call_id)
         print(f"[Scheduler] First call completed for session {session_id}")
+
+        if final_call_details and final_call_details.collected_dynamic_variables:
+            # Get the medication reminder preferences
+            call_schedules = final_call_details.collected_dynamic_variables.get('callSchedules')
+            
+            if call_schedules == "not required":
+                print("Patient doesn't want medication reminders")
+            else:
+                # Parse the JSON array of medication schedules
+                # schedules = json.loads(call_schedules)
+                print(f"Medication reminders needed: {call_schedules}")
+                
+            # Store results
+            store.update(session_id, {
+                'status': 'initial_call_completed',
+                'callSchedules': call_schedules
+            })
+
+
+
 
         if final_call_details:
             print(f"[Scheduler] Call completed for session {session_id}")
@@ -90,19 +112,18 @@ def check_new_sessions():
             print(f"[Scheduler] Call failed or timed out for session {session_id}")
 
 
-# Register task in scheduler: execute every 30 seconds
-scheduler.add_job(check_new_sessions, 'interval', seconds=5)
+# # Register task in scheduler: execute every 30 seconds
 
-@app.before_request
-def start_scheduler():
-    if not scheduler.running:
-        scheduler.start()
-
-
-@app.teardown_appcontext
-def shutdown_scheduler(exception=None):
-    scheduler.shutdown()
+# @app.teardown_appcontext
+# def shutdown_scheduler(exception=None):
+#     scheduler.shutdown()
 
 
 if __name__ == "__main__":
+    scheduler.init_app(app)
+
+    scheduler.start()
+
+    # scheduler.add_job(check_new_sessions, 'interval', seconds=5)
     app.run(debug=True, port=8080)
+

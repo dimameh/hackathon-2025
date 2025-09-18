@@ -41,8 +41,14 @@ Instructions:
 - Explain medical information clearly and avoid complex medical jargon
 - If they ask about specific test results or treatments, refer to the information in the JSON data
 - Be supportive and reassuring while being accurate about their medical information
+- Always ask about medication reminders if medications are mentioned in their data
+- Use the capture_call_schedules function before ending the call
+- Do not repeat the {{patient_data}} information in your response until user asks about it.
+- Try to not repeat yourself.
+- If you hear that patient wants reminders, scheduled calls or asks anything about reminders for medications, then you should call the capture_call_schedules function.
+- If you hear that patient doesn't want reminders, then you should call the end_call function.
 
-Initial message: Parse {{patient_data}} to get the patient's name and medical information, then say "Hello [patient_name], this is calling from your doctor's office. I'm calling to discuss your recent medical results and answer any questions you might have about them."
+Initial message: Parse {{patient_data}} to get the patient's name and medical information, then say "Hello [patient_name], this is calling from your doctor's office. I'm calling to discuss your recent medical results and answer any questions you might have about them. Also I can help you schedule reminder calls for taking your medications."
 
 Remember: All medical information you discuss should come from the {{patient_data}} JSON. Do not make up or assume any medical information not present in the data."""
 
@@ -54,7 +60,30 @@ def create_patient_agent():
     llm_response = client.llm.create(
         general_prompt=general_prompt,
         model="gpt-5",
-        model_temperature=0.3
+        model_temperature=0.3,
+        general_tools=[
+            {
+                "type": "extract_dynamic_variable",
+                "name": "capture_call_schedules",
+                "description": "Capture medication reminder scheduling preferences - MUST be called before ending conversation",
+                "variables": [
+                    {
+                        "name": "callSchedules",
+                        "type": "string",
+                        "description": "Either 'not required' if patient doesn't want reminders, or JSON array of medication schedules like: [{\"medicationName\": \"Lisinopril\", \"time\": \"8:00 AM every day\"}, {\"medicationName\": \"Atorvastatin\", \"time\": \"10:00 PM every day\"}]",
+                        "examples": [
+                            "not required",
+                            "[{\"medicationName\": \"Lisinopril\", \"time\": \"8:00 AM every day\"}, {\"medicationName\": \"Atorvastatin\", \"time\": \"10:00 PM every day\"}]"
+                        ]
+                    }
+                ]
+            }, # type: ignore
+            {
+                "type": "end_call",
+                "name": "end_call",
+                "description": "End the call politely after capturing call schedules"
+            }
+        ]
     )
 
     # Create agent
@@ -80,7 +109,7 @@ def make_patient_call(patient_data):
     call_response = client.call.create_phone_call(
         from_number="+12293184505",
         # to_number="+15103690090",
-        to_number="+16104004327",
+        to_number="+16502182328",
         override_agent_id=agent_id,
 
         # Pass patient-specific data
