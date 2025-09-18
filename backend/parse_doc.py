@@ -68,13 +68,12 @@ def parse_doc(file_paths: list[str], instruction: str | None = None) -> dict[str
 
         base_instruction = (
             "Extract key information from ALL provided documents and return ONE combined strict JSON with fields: "
-            "title (use first document's title), date (use first document's date), "
-            "parties_or_patient (combine unique names), diagnoses_or_topics (combine unique items), "
-            "medications_or_items (combine unique items into array) add everything that is related to medications, form, dosage, duration, instructions, "
-            "recommendations (combine all recommendations into one string) and full_text (combine all texts). "
+            "patient_name (use first document's patient name), doctor_name (use first document's doctor name), diagnoses (combine unique items into a string), "
+            "medications (combine unique items into a string) add everything that is related to medications, form, dosage, duration, instructions, "
+            "recommendations (combine all recommendations into one string) and full_text (combine all texts into one string). "
             "If a field is unknown, use null or []. Try to get as much information as possible. "
             "Because in future you will be asked to explain this information for a person who doesn't know anything about the document and he is not a doctor. "
-            "You will be guiding the user on how to use the information and what to do with it. be very precise and detailed. "
+            "You will be guiding the user on how to use the information and what to do with it. be very precise and detailed. Do not use arrays, instead use a string. Do not use lists, instead use a string."
         )
         if instruction:
             base_instruction = instruction + "\n\n" + base_instruction

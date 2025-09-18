@@ -4,7 +4,9 @@ import os
 from flask_cors import CORS
 from file_store import FileSessionStore
 from create_session import create_session
+
 from apscheduler.schedulers.background import BackgroundScheduler # type: ignore  # pyright: ignore[reportMissingTypeStubs]
+from initial_call import make_patient_call
 
 
 app = Flask(__name__)
@@ -58,7 +60,11 @@ def check_new_sessions():
         store.update(session_id, {'status': 'calling'})
         # function to start the call, implement in step 5
         print(f"[Scheduler] Starting first call for session {session_id}")
-        # TODO: start_first_call(session_id)
+        make_patient_call(store.get(session_id)["data"])
+        print(f"[Scheduler] First call completed for session {session_id}")
+
+        store.update(session_id, {'status': 'initial_call_completed'})
+
 
 
 # Register task in scheduler: execute every 30 seconds
